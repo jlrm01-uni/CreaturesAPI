@@ -11,8 +11,8 @@ async def root():
 
 
 @app.get("/v1/creatures/")
-async def creatures():
-    all_creatures = Creature.objects()
+async def creatures(page: int = 0, items_per_page: int = 8):
+    all_creatures = Creature.objects()[page * items_per_page:page * items_per_page + items_per_page]
 
     list_of_all_creatures = [each_creature.to_mongo().to_dict() for each_creature in all_creatures]
 
@@ -21,6 +21,18 @@ async def creatures():
         del each_entry["ability"]
 
     return list_of_all_creatures
+
+
+@app.get("/v1/abilities/")
+async def abilities(page: int = 0, items_per_page: int = 8):
+    all_abilities = Ability.objects()[page * items_per_page:page * items_per_page + items_per_page]
+
+    list_of_all_abilities = [each_ability.to_mongo().to_dict() for each_ability in all_abilities]
+
+    for each_entry in list_of_all_abilities:
+        del each_entry["_id"]
+
+    return list_of_all_abilities
 
 
 if __name__ == '__main__':
